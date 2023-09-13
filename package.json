@@ -2,9 +2,10 @@
   "name": "blink-hub",
   "version": "0.0.1",
   "description": "A Dynamic Event Emitter for Modern Applications",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
@@ -14,7 +15,9 @@
     "event",
     "emitter",
     "es6",
-    "modern"
+    "modern",
+    "javascript",
+    "typescript"
   ],
   "author": "Valeh Asadli",
   "license": "GPL-3.0-or-later",
@@ -25,12 +28,15 @@
   "devDependencies": {
     "@babel/core": "^7.22.17",
     "@babel/preset-env": "^7.22.15",
+    "@babel/preset-typescript": "^7.22.15",
+    "@types/jest": "^29.5.4",
     "babel-jest": "^29.7.0",
-    "jest": "^29.7.0"
+    "jest": "^29.7.0",
+    "typescript": "^5.2.2"
   },
   "jest": {
     "transform": {
-      "^.+\\.(js|jsx)?$": "babel-jest"
+      "^.+\\.(ts|tsx)?$": "babel-jest"
     }
   }
 }

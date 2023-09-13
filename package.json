@@ -1,0 +1,36 @@
+{
+  "name": "blink-hub",
+  "version": "0.0.1",
+  "description": "A Dynamic Event Emitter for Modern Applications",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/valehasadli/BlinkHub.git"
+  },
+  "keywords": [
+    "event",
+    "emitter",
+    "es6",
+    "modern"
+  ],
+  "author": "Valeh Asadli",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/valehasadli/BlinkHub/issues"
+  },
+  "homepage": "https://github.com/valehasadli/BlinkHub#readme",
+  "devDependencies": {
+    "@babel/core": "^7.22.17",
+    "@babel/preset-env": "^7.22.15",
+    "babel-jest": "^29.7.0",
+    "jest": "^29.7.0"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.(js|jsx)?$": "babel-jest"
+    }
+  }
+}

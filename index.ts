@@ -1,46 +1,42 @@
-type Callback = (...args: any[]) => any;
+type Callback<T extends any[]> = (...args: T) => void;
 
-class Emitter {
-    private events: Map<string, Set<Callback>>;
+class Emitter<T extends Record<string, Callback<any[]>>> {
+    private events: Record<keyof T, Set<Callback<any[]>>> = {} as Record<keyof T, Set<Callback<any[]>>>;
 
-    constructor() {
-        this.events = new Map();
-    }
-
-    subscribe(name: string, callback: Callback): () => void {
-        if (!this.events.has(name)) {
-            this.events.set(name, new Set());
+    subscribe<K extends keyof T>(name: K, callback: T[K]): () => void {
+        if (!this.events[name]) {
+            this.events[name] = new Set();
         }
 
-        const callbacks = this.events.get(name) as Set<Callback>;
-        callbacks.add(callback);
+        this.events[name].add(callback);
 
         const unsubscribe = () => {
-            callbacks.delete(callback);
+            this.events[name].delete(callback);
         };
 
         return unsubscribe;
     }
 
-    emit(name: string, ...args: any[]): any[] {
-        if (!this.events.has(name)) {
+    emit<K extends keyof T>(name: K, ...args: Parameters<T[K]>): ReturnType<T[K]>[] {
+        if (!this.events[name]) {
             return [];
         }
 
-        const callbacks = this.events.get(name) as Set<Callback>;
-        const results: any[] = [];
+        const callbacks = this.events[name];
+        const results: ReturnType<T[K]>[] = [];
 
-        for (let callback of callbacks) {
+        for (const callback of callbacks) {
             try {
-                results.push(callback(...args));
+                results.push(callback(...args) as ReturnType<T[K]>);
             } catch (error) {
-                console.error(`Error in callback for event '${name}'`, error);
-                results.push(null);
+                console.error(`Error in callback for event '${name.toString()}'`, error);
+                results.push(null as any); // you might want to be more specific about error handling here
             }
         }
 
         return results;
     }
+
 }
 
 export default Emitter;

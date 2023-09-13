@@ -1,18 +1,18 @@
+type Callback = (...args: any[]) => any;
+
 class Emitter {
+    private events: Map<string, Set<Callback>>;
+
     constructor() {
         this.events = new Map();
     }
 
-    subscribe(name, callback) {
-        if (typeof name !== 'string' || typeof callback !== 'function') {
-            throw new Error('Invalid callback for subscribe');
-        }
-
+    subscribe(name: string, callback: Callback): () => void {
         if (!this.events.has(name)) {
             this.events.set(name, new Set());
         }
 
-        const callbacks = this.events.get(name);
+        const callbacks = this.events.get(name) as Set<Callback>;
         callbacks.add(callback);
 
         const unsubscribe = () => {
@@ -22,13 +22,13 @@ class Emitter {
         return unsubscribe;
     }
 
-    emit(name, ...args) {
+    emit(name: string, ...args: any[]): any[] {
         if (!this.events.has(name)) {
             return [];
         }
 
-        const callbacks = this.events.get(name);
-        const results = [];
+        const callbacks = this.events.get(name) as Set<Callback>;
+        const results: any[] = [];
 
         for (let callback of callbacks) {
             try {

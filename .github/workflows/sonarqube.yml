@@ -1,4 +1,4 @@
-name: SonarQube Analysis
+name: SonarQube Code Analysis
 
 on: [push, pull_request]
 
@@ -16,3 +16,4 @@ jobs:
         uses: sonarsource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io

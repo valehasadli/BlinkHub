@@ -20,8 +20,7 @@ class Emitter<T extends Record<string, Callback<any[]>>> {
     }
 
     hasSubscribers<K extends keyof T>(name: K): boolean {
-        const subscribers = this.events[name];
-        return Boolean(subscribers && subscribers.size);
+        return Boolean(this.events[name]?.size);
     }
 
     private isAnError(value: unknown): value is Error {

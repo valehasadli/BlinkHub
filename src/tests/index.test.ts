@@ -1,6 +1,5 @@
 import Emitter from '../index';
 
-// Define the signature of the event callbacks.
 type MyEvents = {
     event: (arg1: string, arg2?: string) => void;
     myEvent: () => number | boolean;

@@ -1,40 +1,53 @@
 type Callback<T extends any[]> = (...args: T) => void;
 
 class Emitter<T extends Record<string, Callback<any[]>>> {
-    private events: Record<keyof T, Set<Callback<any[]>>> = {} as Record<keyof T, Set<Callback<any[]>>>;
+    private events: Partial<Record<keyof T, Set<Callback<any[]>>>> = {};
 
     subscribe<K extends keyof T>(name: K, callback: T[K]): () => void {
         if (!this.events[name]) {
             this.events[name] = new Set();
         }
 
-        this.events[name].add(callback);
+        this.events[name]!.add(callback);
 
         return () => {
-            this.events[name].delete(callback);
+            this.events[name]?.delete(callback);
         };
     }
 
-    emit<K extends keyof T>(name: K, ...args: Parameters<T[K]>): ReturnType<T[K]>[] {
+    unsubscribeAll<K extends keyof T>(name: K): void {
+        this.events[name]?.clear();
+    }
+
+    hasSubscribers<K extends keyof T>(name: K): boolean {
+        const subscribers = this.events[name];
+        return Boolean(subscribers && subscribers.size);
+    }
+
+    private isAnError(value: unknown): value is Error {
+        return value instanceof Error;
+    }
+
+    emit<K extends keyof T>(name: K, ...args: Parameters<T[K]>): (ReturnType<T[K]> | Error)[] {
         if (!this.events[name]) {
             return [];
         }
 
-        const callbacks = this.events[name];
-        const results: ReturnType<T[K]>[] = [];
+        const callbacks = this.events[name]!;
+        const results: (ReturnType<T[K]> | Error)[] = [];
 
         for (const callback of callbacks) {
-            try {
-                results.push(callback(...args) as ReturnType<T[K]>);
-            } catch (error) {
-                console.error(`Error in callback for event '${name.toString()}'`, error);
-                results.push(null as any); // you might want to be more specific about error handling here
+            const potentialResult = callback(...args);
+            if (this.isAnError(potentialResult)) {
+                console.error(`Error in callback for event '${name.toString()}'`, potentialResult);
+                results.push(potentialResult);
+            } else {
+                results.push(potentialResult as ReturnType<T[K]>);
             }
         }
 
         return results;
     }
-
 }
 
 export default Emitter;

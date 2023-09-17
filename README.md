@@ -147,4 +147,4 @@ cartEmitter.emit('itemAdded', 'Laptop', 1);
 cartEmitter.emit('itemRemoved', 'Laptop');
 ```
 
-These are just simple examples to illustrate the type of scenarios where the <code>Emitter</code> can be used. Depending on your application, you can define more complex events and handlers to fit your needs.
+These are just simple examples to illustrate the type of scenarios where the <code>Emitter</code> can be used. Depending on your application, you can define more complex events and handlers to fit your needs...

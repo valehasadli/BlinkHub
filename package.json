@@ -1,11 +1,13 @@
 {
   "name": "blink-hub",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A Dynamic Event Emitter for Modern Applications",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "test": "jest",
-    "build": "tsc"
+    "build": "tsc",
+    "prepublishOnly": "tsc"
   },
   "repository": {
     "type": "git",
@@ -25,6 +27,9 @@
     "url": "https://github.com/valehasadli/BlinkHub/issues"
   },
   "homepage": "https://github.com/valehasadli/BlinkHub#readme",
+  "files": [
+    "dist"
+  ],
   "devDependencies": {
     "@babel/core": "^7.22.17",
     "@babel/preset-env": "^7.22.15",

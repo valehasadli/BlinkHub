@@ -10,11 +10,9 @@ class Emitter<T extends Record<string, Callback<any[]>>> {
 
         this.events[name].add(callback);
 
-        const unsubscribe = () => {
+        return () => {
             this.events[name].delete(callback);
         };
-
-        return unsubscribe;
     }
 
     emit<K extends keyof T>(name: K, ...args: Parameters<T[K]>): ReturnType<T[K]>[] {

@@ -1,0 +1,35 @@
+# Source files (We only want to publish compiled JS)
+/src/
+
+# Test files and related
+/tests/
+**/*.spec.ts
+**/*.test.ts
+
+# Configuration files
+tsconfig.json
+jest.config.js
+.eslintrc.js
+.prettierrc
+
+# Development environment files
+node_modules/
+.yarn/
+.nyc_output/
+coverage/
+
+# IDE related
+.vscode/
+.idea/
+*.log
+
+# Build output (if you're providing source maps, you might not want to ignore these)
+# **/*.js.map
+# **/*.d.ts.map
+
+# Other
+*.tar.gz
+*.pid
+*.log
+*.DS_Store
+README.md

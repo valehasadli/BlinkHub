@@ -1,4 +1,4 @@
-import Emitter from '.';
+import Emitter from './index';
 
 // Define the signature of the event callbacks.
 type MyEvents = {

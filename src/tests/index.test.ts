@@ -1,4 +1,4 @@
-import Emitter from './index';
+import Emitter from '../index';
 
 type MyEvents = {
     event: (arg1: string, arg2?: string) => void;

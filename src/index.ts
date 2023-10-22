@@ -1,4 +1,4 @@
-type Callback<T extends any[]> = (...args: T) => void;
+import { Callback } from "./types/callback";
 
 class Emitter<T extends Record<string, Callback<any[]>>> {
     private events: Partial<Record<keyof T, Set<Callback<any[]>>>> = {};

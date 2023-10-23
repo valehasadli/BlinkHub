@@ -1,30 +1,28 @@
-type Callback<T extends any[]> = (...args: T) => void;
+import { Callback } from "./types/callback";
+import { Listener } from "./types/listener";
 
 class Emitter<T extends Record<string, Callback<any[]>>> {
-    private events: Partial<Record<keyof T, Set<Callback<any[]>>>> = {};
+    private events: Partial<Record<keyof T, Set<Listener<Callback<any[]>>>>> = {};
 
-    subscribe<K extends keyof T>(name: K, callback: T[K]): () => void {
+    subscribe<K extends keyof T>(name: K, callback: T[K], priority: number = 0): () => void {
         if (!this.events[name]) {
             this.events[name] = new Set();
         }
 
-        this.events[name]!.add(callback);
+        const listener: Listener<T[K]> = { callback, priority };
+
+        this.events[name] = new Set([...this.events[name]!]
+            .concat(listener)
+            .sort((a, b) => b.priority - a.priority));
+
 
         return () => {
-            this.events[name]?.delete(callback);
+            this.events[name]?.forEach(l => {
+                if (l.callback === callback) {
+                    this.events[name]?.delete(l);
+                }
+            });
         };
-    }
-
-    unsubscribeAll<K extends keyof T>(name: K): void {
-        this.events[name]?.clear();
-    }
-
-    hasSubscribers<K extends keyof T>(name: K): boolean {
-        return Boolean(this.events[name]?.size);
-    }
-
-    private isAnError(value: unknown): value is Error {
-        return value instanceof Error;
     }
 
     emit<K extends keyof T>(name: K, ...args: Parameters<T[K]>): (ReturnType<T[K]> | Error)[] {
@@ -32,16 +30,15 @@ class Emitter<T extends Record<string, Callback<any[]>>> {
             return [];
         }
 
-        const callbacks = this.events[name]!;
+        const listeners = this.events[name]!;
         const results: (ReturnType<T[K]> | Error)[] = [];
 
-        for (const callback of callbacks) {
-            const potentialResult = callback(...args);
-            if (this.isAnError(potentialResult)) {
-                console.error(`Error in callback for event '${name.toString()}'`, potentialResult);
-                results.push(potentialResult);
-            } else {
-                results.push(potentialResult as ReturnType<T[K]>);
+        for (const listener of listeners) {
+            try {
+                const result = listener.callback(...args);
+                results.push(result as ReturnType<T[K]>);
+            } catch (error) {
+                results.push(error as Error);
             }
         }
 

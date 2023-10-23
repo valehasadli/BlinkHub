@@ -147,4 +147,34 @@ cartEmitter.emit('itemAdded', 'Laptop', 1);
 cartEmitter.emit('itemRemoved', 'Laptop');
 ```
 
+## Emitter with Priority
+
+The Emitter now supports priority-based event handling. You can specify priorities when subscribing to events, ensuring that listeners with higher priorities are called before those with lower ones. For example, in a logging system, critical error handlers might have a higher priority than general logging handlers.
+
+Here's how to use priority handling:
+
+```typescript
+const emitter = new Emitter<{ testEvent: (val: string) => string }>();
+
+emitter.subscribe('testEvent', (val: string) => {
+    results.push('Default Priority');
+    return val;
+});
+
+emitter.subscribe('testEvent', (val: string) => {
+    results.push('Higher Priority');
+    return val;
+}, 10);
+
+emitter.subscribe('testEvent', (val: string) => {
+    results.push('Lower Priority');
+    return val;
+}, -10);
+
+emitter.emit('testEvent', '');
+
+// Validate the order
+expect(results).toEqual(['Higher Priority', 'Default Priority', 'Lower Priority']);
+
+
 These are just simple examples to illustrate the type of scenarios where the <code>Emitter</code> can be used. Depending on your application, you can define more complex events and handlers to fit your needs...

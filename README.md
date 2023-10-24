@@ -38,7 +38,7 @@ Now, you can create an instance of the <code>Emitter</code> and subscribe to eve
 ```typescript
 const emitter = new Emitter<MyEvents>();
 
-const unsubscribe = emitter.subscribe('eventName', (arg1, arg2) => {
+const unsubscribe = emitter.subscribe('eventName', (arg1: string, arg2: string) => {
     console.log(`Received ${arg1} and ${arg2}`);
 });
 ```
@@ -96,12 +96,12 @@ Components can now subscribe to these events:
 
 ```typescript
 // Notify components about user's login
-userEmitter.subscribe('userLoggedIn', (username, time) => {
+userEmitter.subscribe('userLoggedIn', (username: string, time: Date) => {
     console.log(`${username} logged in at ${time.toLocaleTimeString()}`);
 });
 
 // Notify components about user's logout
-userEmitter.subscribe('userLoggedOut', (username) => {
+userEmitter.subscribe('userLoggedOut', (username: string) => {
     console.log(`${username} has logged out.`);
 });
 ```
@@ -131,11 +131,11 @@ Create an instance and subscribe to the events:
 ```typescript
 const cartEmitter = new Emitter<CartEvents>();
 
-cartEmitter.subscribe('itemAdded', (itemName, quantity) => {
+cartEmitter.subscribe('itemAdded', (itemName: string, quantity: number) => {
     console.log(`Added ${quantity} of ${itemName} to the cart.`);
 });
 
-cartEmitter.subscribe('itemRemoved', (itemName) => {
+cartEmitter.subscribe('itemRemoved', (itemName: string) => {
     console.log(`${itemName} has been removed from the cart.`);
 });
 ```
@@ -154,7 +154,11 @@ The Emitter now supports priority-based event handling. You can specify prioriti
 Here's how to use priority handling:
 
 ```typescript
-const emitter = new Emitter<{ testEvent: (val: string) => string }>();
+type TestEvents = {
+  testEvent: (val: string) => string;
+};
+
+const emitter = new Emitter<TestEvents>();
 
 emitter.subscribe('testEvent', (val: string) => {
     results.push('Default Priority');
@@ -172,9 +176,6 @@ emitter.subscribe('testEvent', (val: string) => {
 }, -10);
 
 emitter.emit('testEvent', '');
-
-// Validate the order
-expect(results).toEqual(['Higher Priority', 'Default Priority', 'Lower Priority']);
 ```
 
 These are just simple examples to illustrate the type of scenarios where the <code>Emitter</code> can be used. Depending on your application, you can define more complex events and handlers to fit your needs...

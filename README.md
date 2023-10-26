@@ -219,3 +219,5 @@ Event emitters might provide a performance edge in cases where the Context API m
 ### 8. Non-UI Logic
 
 For parts of your application logic that reside outside the React component tree, event emitters can be beneficial, as they aren't tied to React's lifecycle or component hierarchy.
+
+**For a practical use case in React using the BlinkHub Emitter, see the [React example on GitHub](https://github.com/valehasadli/blinkhub-react-example).**

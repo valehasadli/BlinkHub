@@ -180,7 +180,7 @@ emitter.emit('testEvent', '');
 
 These are just simple examples to illustrate the type of scenarios where the <code>Emitter</code> can be used. Depending on your application, you can define more complex events and handlers to fit your needs...
 
-## FAQ for React developer
+## FAQ for React developers
 
 ### Why You Might Choose Event Emitters Over Context in React
 

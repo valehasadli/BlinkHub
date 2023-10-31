@@ -61,7 +61,7 @@ unsubscribe(); // This will remove the callback from the event listeners.
 
 ### The `once` Method
 
-The once method allows listeners to be invoked only once for the specified event. After the event has been emitted and the listener invoked, the listener is automatically removed. This can be useful for scenarios where you need to react to an event just a single time, rather than every time it's emitted.
+The `once` method allows listeners to be invoked only once for the specified event. After the event has been emitted and the listener invoked, the listener is automatically removed. This can be useful for scenarios where you need to react to an event just a single time, rather than every time it's emitted.
 
 ```typescript
 type UserEvents = {

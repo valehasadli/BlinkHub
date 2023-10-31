@@ -16,13 +16,31 @@ class Emitter<T extends Record<string, Callback<any[]>>> {
             .sort((a, b) => b.priority - a.priority));
 
 
-        return () => {
-            this.events[name]?.forEach(l => {
-                if (l.callback === callback) {
-                    this.events[name]?.delete(l);
+        return (): void => {
+            this.events[name]?.forEach(listener => {
+                if (listener.callback === callback) {
+                    this.events[name]?.delete(listener);
                 }
             });
         };
+    }
+
+    once<K extends keyof T>(name: K, callback: T[K], priority: number = 0): () => void {
+        let unsubscribe: (() => void) | null = null;
+
+        const wrappedCallback = (...args: Parameters<T[K]>): void => {
+            try {
+                callback(...args);
+            } finally {
+                if (unsubscribe) {
+                    unsubscribe();
+                }
+            }
+        };
+
+        unsubscribe = this.subscribe(name, wrappedCallback as any, priority);
+
+        return unsubscribe;
     }
 
     emit<K extends keyof T>(name: K, ...args: Parameters<T[K]>): (ReturnType<T[K]> | Error)[] {

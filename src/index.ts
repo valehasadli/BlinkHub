@@ -16,10 +16,10 @@ class Emitter<T extends Record<string, Callback<any[]>>> {
             .sort((a, b) => b.priority - a.priority));
 
 
-        return () => {
-            this.events[name]?.forEach(l => {
-                if (l.callback === callback) {
-                    this.events[name]?.delete(l);
+        return (): void => {
+            this.events[name]?.forEach(listener => {
+                if (listener.callback === callback) {
+                    this.events[name]?.delete(listener);
                 }
             });
         };

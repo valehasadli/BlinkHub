@@ -25,6 +25,24 @@ class Emitter<T extends Record<string, Callback<any[]>>> {
         };
     }
 
+    once<K extends keyof T>(name: K, callback: T[K], priority: number = 0): () => void {
+        let unsubscribe: (() => void) | null = null;
+
+        const wrappedCallback = (...args: Parameters<T[K]>): void => {
+            try {
+                callback(...args);
+            } finally {
+                if (unsubscribe) {
+                    unsubscribe();
+                }
+            }
+        };
+
+        unsubscribe = this.subscribe(name, wrappedCallback as any, priority);
+
+        return unsubscribe;
+    }
+
     emit<K extends keyof T>(name: K, ...args: Parameters<T[K]>): (ReturnType<T[K]> | Error)[] {
         if (!this.events[name]) {
             return [];

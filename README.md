@@ -59,6 +59,29 @@ To remove a listener from an event:
 unsubscribe(); // This will remove the callback from the event listeners.
 ```
 
+### The `once` Method
+
+The once method allows listeners to be invoked only once for the specified event. After the event has been emitted and the listener invoked, the listener is automatically removed. This can be useful for scenarios where you need to react to an event just a single time, rather than every time it's emitted.
+
+```typescript
+type UserEvents = {
+  userFirstLogin: (username: string) => void;
+};
+
+const userEmitter = new Emitter<UserEvents>();
+
+userEmitter.once('userFirstLogin', (username: string): void => {
+    console.log(`${username} has logged in for the first time!`);
+});
+
+userEmitter.emit('userFirstLogin', 'Alice'); // Outputs: Alice has logged in for the first time!
+userEmitter.emit('userFirstLogin', 'Alice'); // No output, as the listener has been removed.
+
+```
+
+#### Note:
+If an error occurs within a callback registered with `once`, the callback will not be re-invoked for subsequent events. Always handle errors adequately to prevent unforeseen behavior.
+
 ### Error Handling
 
 If an error occurs within a callback, the emitter will catch it and log it to the console. The emitter also pushes a null value to the results array in case of errors, though this behavior can be customized.

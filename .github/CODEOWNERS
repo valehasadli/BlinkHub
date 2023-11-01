@@ -1,0 +1,5 @@
+# Match all contributors and require approval for the master branch
+* @username-to-approve
+
+# Exception: Exclude your username from the approval requirement
+@valehasadli

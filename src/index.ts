@@ -3,6 +3,7 @@ import { Listener } from "./types/listener";
 
 class Emitter<T extends Record<string, Callback<any[]>>> {
     private events: Partial<Record<keyof T, Set<Listener<Callback<any[]>>>>> = {};
+    private channels: Map<string, Emitter<T>> = new Map();
 
     subscribe<K extends keyof T>(name: K, callback: T[K], priority: number = 0): () => void {
         if (!this.events[name]) {
@@ -61,6 +62,13 @@ class Emitter<T extends Record<string, Callback<any[]>>> {
         }
 
         return results;
+    }
+
+    channel(name: string): Emitter<T> {
+        if (!this.channels.has(name)) {
+            this.channels.set(name, new Emitter<T>());
+        }
+        return this.channels.get(name) as Emitter<T>;
     }
 }
 

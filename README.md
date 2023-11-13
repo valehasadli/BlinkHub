@@ -206,7 +206,50 @@ emitter.emit('testEvent', 'some value');
 console.log(results);
 ```
 
-These are just simple examples to illustrate the type of scenarios where the <code>Emitter</code> can be used. Depending on your application, you can define more complex events and handlers to fit your needs...
+## Channel-Based Event Handling
+
+The Emitter also supports channel-based event handling, allowing for more granular control over event propagation and listener management.
+
+### Defining Channels
+
+Channels can be created to group specific event types or to separate event handling logic for different parts of an application:
+
+```typescript
+type ChannelEvents = {
+  channelEvent: (message: string) => void;
+};
+
+const emitter = new Emitter<ChannelEvents>();
+const chatChannel = emitter.channel('chat');
+const notificationChannel = emitter.channel('notification');
+```
+
+### Subscribing to Channel Events
+
+Listeners can subscribe to events within a specific channel, which is isolated from the global emitter and other channels:
+
+```typescript
+chatChannel.subscribe('channelEvent', (message: string) => {
+    console.log(`New chat message: ${message}`);
+});
+
+notificationChannel.subscribe('channelEvent', (message: string) => {
+    console.log(`New notification: ${message}`);
+});
+```
+
+### Emitting Channel Events
+
+Events can be emitted on specific channels without affecting listeners on other channels:
+
+```typescript
+chatChannel.emit('channelEvent', 'Hello, World!'); 
+// Outputs: New chat message: Hello, World!
+notificationChannel.emit('channelEvent', 'You have 3 new notifications!'); 
+// Outputs: New notification: You have 3 new notifications!
+```
+
+This channel-based approach ensures that events are handled only by the listeners that are relevant to the particular context or module, improving modularity and maintainability.
 
 ## FAQ for React developers
 

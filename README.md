@@ -183,6 +183,8 @@ type TestEvents = {
 
 const emitter = new Emitter<TestEvents>();
 
+const results: string[] = [];
+
 emitter.subscribe('testEvent', (val: string) => {
     results.push('Default Priority');
     return val;
@@ -198,7 +200,10 @@ emitter.subscribe('testEvent', (val: string) => {
     return val;
 }, -10);
 
-emitter.emit('testEvent', '');
+emitter.emit('testEvent', 'some value');
+
+// The expected order in results should be: ['Higher Priority', 'Default Priority', 'Lower Priority']
+console.log(results);
 ```
 
 These are just simple examples to illustrate the type of scenarios where the <code>Emitter</code> can be used. Depending on your application, you can define more complex events and handlers to fit your needs...

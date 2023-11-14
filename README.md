@@ -1,6 +1,6 @@
 # BlinkHub Emitter
 
-A type-safe event emitter class built with TypeScript, which provides an interface for subscribing to and emitting events.
+A type-safe event emitter library built with TypeScript, which provides an interface for subscribing to and emitting events.
 
 ## Table of Contents
 
@@ -12,7 +12,6 @@ A type-safe event emitter class built with TypeScript, which provides an interfa
     - [Unsubscribing from Events](#unsubscribing-from-events)
 - [Error Handling](#error-handling)
 - [Examples](#examples)
-- [License](#license)
 
 ## Installation
 

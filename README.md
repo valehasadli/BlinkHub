@@ -201,8 +201,8 @@ emitter.subscribe('testEvent', (val: string) => {
 
 emitter.emit('testEvent', 'some value');
 
-// The expected order in results should be: ['Higher Priority', 'Default Priority', 'Lower Priority']
 console.log(results);
+// The expected order in results should be: ['Higher Priority', 'Default Priority', 'Lower Priority']
 ```
 
 ## Channel-Based Event Handling

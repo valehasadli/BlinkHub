@@ -1,7 +1,7 @@
 {
   "name": "blink-hub",
   "version": "0.3.3",
-  "description": "A Dynamic Event Emitter library for Modern Javascript/TypeScript Applications",
+  "description": "A versatile and efficient event-handling library designed for the modern JS/TS ecosystem.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {

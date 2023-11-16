@@ -1,5 +1,5 @@
-import { EventRegistry } from "@/core/EventRegistry";
-import { IEvent } from "@/types/IEvent";
+import { EventRegistry } from "../core/EventRegistry";
+import { IEvent } from "../types/IEvent";
 
 export class Channel<T extends Record<string, (...args: any[]) => void>> implements IEvent<T>{
 	private eventRegistry = new EventRegistry<T>();

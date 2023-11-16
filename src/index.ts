@@ -1,3 +1,2 @@
-import Emitter from "@/core/Emitter";
-
+import Emitter from "./core/Emitter";
 export default Emitter;

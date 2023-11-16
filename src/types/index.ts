@@ -1,4 +1,4 @@
-import { Callback } from '@/types/Callback';
-import { Listener } from '@/types/Listener';
+import { Callback } from './Callback';
+import { Listener } from './Listener';
 
 export { Callback, Listener };

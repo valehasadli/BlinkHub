@@ -1,5 +1,5 @@
-import { Emitter } from "@/core/Emitter";
-import { Channel } from "@/channels/Channel";
+import Emitter from "../../src";
+import { Channel } from "../../src/channels/Channel";
 
 type MyEvents = {
 	eventName: (arg: string) => void;

@@ -27,3 +27,5 @@ export class Emitter<T extends Record<string, (...args: any[]) => void>> impleme
 		return this.channelRegistry.channel(name);
 	}
 }
+
+export default Emitter;

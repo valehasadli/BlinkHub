@@ -1,4 +1,5 @@
-import Emitter from "../index";
+import { Emitter } from "@/core/Emitter";
+import { Channel } from "@/channels/Channel";
 
 type MyEvents = {
 	eventName: (arg: string) => void;
@@ -6,8 +7,8 @@ type MyEvents = {
 
 describe('Emitter with Channels', () => {
 	let emitter: Emitter<MyEvents>;
-	let userChannel: Emitter<MyEvents>;
-	let adminChannel: Emitter<MyEvents>;
+	let userChannel: Channel<MyEvents>;
+	let adminChannel: Channel<MyEvents>;
 
 	beforeEach(() => {
 		emitter = new Emitter<MyEvents>();

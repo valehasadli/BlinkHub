@@ -93,6 +93,40 @@ emitter.subscribe('eventName', () => {
 emitter.emit('eventName', 'Test', 'Error'); // Outputs: Error in callback for event 'eventName'
 ```
 
+
+### Subscribing to Multiple Events
+The subscribeList method allows you to subscribe to multiple events at once, providing a convenient way to manage event listeners when you need to react to different events with the same or different callbacks.
+
+Usage
+To subscribe to multiple events, pass an object to subscribeList where keys are event names and values are the corresponding callback functions:
+
+```typescript
+type UserEvents = {
+  userLoggedIn: (username: string) => void;
+  userLoggedOut: (username: string) => void;
+  userProfileUpdated: (username: string, updateInfo: string) => void;
+};
+
+const userEmitter = new Emitter<UserEvents>();
+
+// Subscribe to user-related events
+const unsubscribe = userEmitter.subscribeList({
+  userLoggedIn: (username: string) => console.log(`${username} logged in`),
+  userLoggedOut: (username: string) => console.log(`${username} logged out`),
+  userProfileUpdated: (username: string, updateInfo: string) => 
+          console.log(`User ${username} updated their profile: ${updateInfo}`)
+});
+
+// Emit events based on user activity
+userEmitter.emit('userLoggedIn', 'Alice');
+userEmitter.emit('userProfileUpdated', 'Alice', 'Changed profile picture');
+userEmitter.emit('userLoggedOut', 'Alice');
+```
+To unsubscribe from the user events:
+```typescript
+unsubscribe();
+```
+
 ### Examples
 
 ## Simple Notification System

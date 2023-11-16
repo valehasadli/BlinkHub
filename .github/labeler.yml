@@ -1,3 +1,4 @@
 test: src/tests/*
 feat: src/*
-doc: docs/*
+core: src/core/*
+channel: src/channels/*

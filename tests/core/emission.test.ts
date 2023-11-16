@@ -1,4 +1,4 @@
-import { Emitter } from '@/core/Emitter';
+import Emitter from "../../src";
 
 type MyEvents = {
     event: (arg1: string, arg2?: string) => void;

@@ -1,4 +1,4 @@
-import { Listener } from "@/types";
+import { Listener } from "../types";
 
 export class EventRegistry<T extends Record<string, (...args: any[]) => void>> {
 	private events: Partial<Record<keyof T, Set<Listener<T[keyof T]>>>> = {};

@@ -1,6 +1,6 @@
 {
   "name": "blink-hub",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "description": "A versatile and efficient event-handling library designed for the modern JS/TS ecosystem.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -43,9 +43,6 @@
   "jest": {
     "transform": {
       "^.+\\.(ts|tsx)?$": "babel-jest"
-    },
-    "moduleNameMapper": {
-      "^@/(.*)$": "<rootDir>/src/$1"
     }
   }
 }

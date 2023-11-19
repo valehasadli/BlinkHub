@@ -3,7 +3,7 @@ import { ChannelRegistry } from "../channels/ChannelRegistry";
 import { Channel } from "../channels/Channel";
 import { IEvent } from "../types/IEvent";
 
-export class Emitter<T extends Record<string, (...args: any[]) => void>> implements IEvent<T>{
+export default class Emitter<T extends Record<string, (...args: any[]) => void>> implements IEvent<T>{
 	private eventRegistry = new EventRegistry<T>();
 	private channelRegistry = new ChannelRegistry<T>();
 
@@ -27,5 +27,3 @@ export class Emitter<T extends Record<string, (...args: any[]) => void>> impleme
 		return this.channelRegistry.channel(name);
 	}
 }
-
-export default Emitter;

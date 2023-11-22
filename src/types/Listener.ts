@@ -1,6 +1,4 @@
-import { Callback } from "./Callback";
-
-export type Listener<T extends Callback<any[]>> = {
+export type Listener<T> = {
     callback: T;
     priority: number;
 };

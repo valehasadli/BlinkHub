@@ -1,25 +1,19 @@
 import { Listener } from "../types";
+import PriorityQueue from "./PriorityQueue";
 
 export class EventRegistry<T extends Record<string, (...args: any[]) => void>> {
-	private events: Partial<Record<keyof T, Set<Listener<T[keyof T]>>>> = {};
+	private events: Partial<Record<keyof T, PriorityQueue<T[keyof T]>>> = {};
 
 	subscribe<K extends keyof T>(name: K, callback: T[K], priority: number = 0): () => void {
 		if (!this.events[name]) {
-			this.events[name] = new Set();
+			this.events[name] = new PriorityQueue<T[keyof T]>();
 		}
 
 		const listener: Listener<T[K]> = { callback, priority };
-
-		this.events[name] = new Set([...this.events[name]!]
-			.concat(listener)
-			.sort((a, b) => b.priority - a.priority));
+		this.events[name]!.enqueue(listener);
 
 		return (): void => {
-			this.events[name]?.forEach(listener => {
-				if (listener.callback === callback) {
-					this.events[name]?.delete(listener);
-				}
-			});
+			this.events[name]?.remove(listener);
 		};
 	}
 
@@ -62,13 +56,18 @@ export class EventRegistry<T extends Record<string, (...args: any[]) => void>> {
 			return [];
 		}
 
-		const listeners = this.events[name]!;
 		const results: (ReturnType<T[K]> | Error)[] = [];
+		const listeners = this.events[name]!.getListeners();
 
 		for (const listener of listeners) {
 			try {
+				// Call the listener and capture any return value
 				const result = listener.callback(...args);
-				results.push(result as ReturnType<T[K]>);
+
+				// If result is undefined (void), we don't push it to results
+				if (result !== undefined) {
+					results.push(result as ReturnType<T[K]>);
+				}
 			} catch (error) {
 				results.push(error as Error);
 			}

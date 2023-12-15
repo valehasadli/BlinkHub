@@ -1,9 +1,13 @@
-import { EventRegistry } from "./EventRegistry";
-import { ChannelRegistry } from "../channels/ChannelRegistry";
-import { Channel } from "../channels/Channel";
-import { IEvent } from "../types/IEvent";
+import { EventRegistry } from './EventRegistry';
+import { ChannelRegistry } from '../channels/ChannelRegistry';
+import { Channel } from '../channels/Channel';
+import { IEventSubscriber } from '../interfaces/IEventSubscriber';
+import { IEventOnceSubscriber } from '../interfaces/IEventOnceSubscriber';
+import { IBulkEventSubscriber } from '../interfaces/IBulkEventSubscriber';
+import { IChannelEventEmitter } from '../interfaces/IChannelEventEmitter';
 
-export default class Emitter<T extends Record<string, (...args: any[]) => void>> implements IEvent<T>{
+export default class Emitter<T extends Record<string, (...args: any[]) => void>>
+	implements IEventSubscriber<T>, IEventOnceSubscriber<T>, IBulkEventSubscriber<T>, IChannelEventEmitter<T>  {
 	private eventRegistry = new EventRegistry<T>();
 	private channelRegistry = new ChannelRegistry<T>();
 

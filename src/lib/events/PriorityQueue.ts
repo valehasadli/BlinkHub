@@ -1,4 +1,4 @@
-import { Listener } from "../types";
+import { Listener } from '../types';
 
 export default class PriorityQueue<T extends (...args: any[]) => any> {
 	private items: Array<Listener<T>> = [];

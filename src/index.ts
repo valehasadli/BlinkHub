@@ -1,2 +1,2 @@
-import Emitter from "./core/Emitter";
+import Emitter from './lib/events/Emitter';
 export default Emitter;

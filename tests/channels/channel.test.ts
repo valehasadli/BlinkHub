@@ -1,5 +1,5 @@
 import Emitter from "../../src";
-import { Channel } from "../../src/channels/Channel";
+import { Channel } from "../../src/lib/channels/Channel";
 
 type MyEvents = {
 	eventName: (arg: string) => void;

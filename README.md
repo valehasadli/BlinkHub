@@ -93,6 +93,27 @@ emitter.subscribe('eventName', () => {
 emitter.emit('eventName', 'Test', 'Error'); // Outputs: Error in callback for event 'eventName'
 ```
 
+### Subscribing to Events with Delay
+
+The `subscribeWithDelay` method allows you to subscribe to an event with a specified delay.
+This means the callback function will only be executed after the delay period has passed, following the event emission.
+
+```typescript
+const emitter = new Emitter<TestEvents>();
+
+// Subscribe to an event with a delay
+const delay = 1000; // Delay in milliseconds (1000ms = 1 second)
+emitter.subscribeWithDelay('testEvent', (data: string) => {
+    console.log(`Received (after delay): ${data}`);
+}, delay);
+
+// Emit the event
+emitter.emit('testEvent', 'Delayed Message');
+// The callback will be executed after 1 second
+```
+
+This is particularly useful in scenarios where you want to defer the execution of an event handler,
+such as debouncing user input or delaying a notification.
 
 ### Subscribing to Multiple Events
 The subscribeList method allows you to subscribe to multiple events at once, providing a convenient way to manage event listeners when you need to react to different events with the same or different callbacks.

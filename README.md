@@ -5,19 +5,30 @@ A type-safe event emitter library built with TypeScript, which provides an inter
 ## Table of Contents
 
 - [Installation](#installation)
-- [Usage](#usage)
+- [Basic Usage](#basic-usage)
     - [Defining Events and Their Types](#defining-events-and-their-types)
     - [Subscribing to Events](#subscribing-to-events)
     - [Emitting Events](#emitting-events)
     - [Unsubscribing from Events](#unsubscribing-from-events)
-- [Error Handling](#error-handling)
-- [Examples](#examples)
+- [Advanced Features]()
+  - [The `once` method](#the-once-method)
+  - [Subscribing to Events with Delay](#subscribing-to-events-with-delay)
+  - [Subscribing to Multiple Events](#subscribing-to-multiple-events)
+  - [Emitter with Priority](#emitter-with-priority)
+  - [Channel-Based Event Handling](#channel-based-event-handling)
+  - [Error Handling](#error-handling)
+- [Use Case Examples](#use-case-examples)
+  - [Simple Notification System](#simple-notification-system)
+  - [E-Commerce Cart System](#e-commerce-cart-system)
+- [Additional Information](#additional-information)
+  - [FAQ for React Developers](#faq-for-react-developers)
+  - [Link to React Example](#link-to-react-example)
 
 ## Installation
 
 `npm i blink-hub`
 
-## Usage
+## Basic Usage
 
 ### Defining Events and Their Types
 
@@ -60,7 +71,9 @@ unsubscribe(); // This will remove the callback from the event listeners.
 
 ### The `once` Method
 
-The `once` method allows listeners to be invoked only once for the specified event. After the event has been emitted and the listener invoked, the listener is automatically removed. This can be useful for scenarios where you need to react to an event just a single time, rather than every time it's emitted.
+The `once` method allows listeners to be invoked only once for the specified event. 
+After the event has been emitted and the listener invoked, the listener is automatically removed. 
+This can be useful for scenarios where you need to react to an event just a single time, rather than every time it's emitted.
 
 ```typescript
 type UserEvents = {
@@ -79,19 +92,8 @@ userEmitter.emit('userFirstLogin', 'Alice'); // No output, as the listener has b
 ```
 
 #### Note:
-If an error occurs within a callback registered with `once`, the callback will not be re-invoked for subsequent events. Always handle errors adequately to prevent unforeseen behavior.
-
-### Error Handling
-
-If an error occurs within a callback, the emitter will catch it and log it to the console. The emitter also pushes a null value to the results array in case of errors, though this behavior can be customized.
-
-```typescript
-emitter.subscribe('eventName', () => {
-    throw new Error('Oops!');
-});
-
-emitter.emit('eventName', 'Test', 'Error'); // Outputs: Error in callback for event 'eventName'
-```
+If an error occurs within a callback registered with `once`, the callback will not be re-invoked for subsequent events. 
+Always handle errors adequately to prevent unforeseen behavior.
 
 ### Subscribing to Events with Delay
 
@@ -148,7 +150,19 @@ To unsubscribe from the user events:
 unsubscribe();
 ```
 
-### Examples
+### Error Handling
+
+If an error occurs within a callback, the emitter will catch it and log it to the console. The emitter also pushes a null value to the results array in case of errors, though this behavior can be customized.
+
+```typescript
+emitter.subscribe('eventName', () => {
+    throw new Error('Oops!');
+});
+
+emitter.emit('eventName', 'Test', 'Error'); // Outputs: Error in callback for event 'eventName'
+```
+
+### Use Case Examples
 
 ## Simple Notification System
 
@@ -305,44 +319,42 @@ notificationChannel.emit('channelEvent', 'You have 3 new notifications!');
 
 This channel-based approach ensures that events are handled only by the listeners that are relevant to the particular context or module, improving modularity and maintainability.
 
-## FAQ for React developers
+## Additional Information
 
-### Why You Might Choose Event Emitters Over Context in React
+### FAQ for React developers
+
+Why You Might Choose Event Emitters Over Context in React?
 
 Note: Same reasons can/may apply for all framework/libraries.
 
-While React's Context API offers a powerful way to manage and propagate state changes through your component tree, there are scenarios where an event emitter might be a more appropriate choice. Below, we detail some reasons why developers might opt for event emitters in certain situations.
+While React's Context API offers a powerful way to manage and propagate state changes through your component tree, 
+there are scenarios where an event emitter might be a more appropriate choice. 
+Below, we detail some reasons why developers might opt for event emitters in certain situations.
 
-### 1. Granularity
+- Granularity 
+  - Event emitters allow you to listen to very specific events. With the Context API, any component consuming the context will re-render when the context value changes. If you're looking to react to specific events rather than broad state changes, an event emitter could be more suitable.
 
-Event emitters allow you to listen to very specific events. With the Context API, any component consuming the context will re-render when the context value changes. If you're looking to react to specific events rather than broad state changes, an event emitter could be more suitable.
+- Decoupling 
+  - Event emitters facilitate a decoupled architecture. Components or services can emit events without knowing or caring about the listeners. This can lead to more modular and maintainable code, particularly in larger applications.
 
-### 2. Decoupling
+- Cross-Framework Compatibility 
+  - In environments where different parts of your application use different frameworks or vanilla JavaScript, event emitters can provide a unified communication channel across these segments.
 
-Event emitters facilitate a decoupled architecture. Components or services can emit events without knowing or caring about the listeners. This can lead to more modular and maintainable code, particularly in larger applications.
+- Multiple Listeners 
+  - Event emitters inherently support having multiple listeners for a single event. This can be leveraged to trigger various side effects from one event, whereas with Context API, this would need manual management.
 
-### 3. Cross-Framework Compatibility
+- Deeply Nested Components 
+  - In applications with deeply nested component structures, prop-drilling or managing context might become cumbersome. Event emitters can be an alternative to simplify state and event management in such cases.
 
-In environments where different parts of your application use different frameworks or vanilla JavaScript, event emitters can provide a unified communication channel across these segments.
+- Historical Reasons 
+  - Older codebases developed before the advent of hooks and the newer Context API features might still employ event emitters, as they once provided a simpler solution to global state management in React.
 
-### 4. Multiple Listeners
+- Performance 
+  - Event emitters might provide a performance edge in cases where the Context API might cause unnecessary re-renders. Since event emitters don't inherently lead to re-renders, they can be more performant in specific scenarios.
 
-Event emitters inherently support having multiple listeners for a single event. This can be leveraged to trigger various side effects from one event, whereas with Context API, this would need manual management.
+- Non-UI Logic 
+  - For parts of your application logic that reside outside the React component tree, event emitters can be beneficial, as they aren't tied to React's lifecycle or component hierarchy.
 
-### 5. Deeply Nested Components
-
-In applications with deeply nested component structures, prop-drilling or managing context might become cumbersome. Event emitters can be an alternative to simplify state and event management in such cases.
-
-### 6. Historical Reasons
-
-Older codebases developed before the advent of hooks and the newer Context API features might still employ event emitters, as they once provided a simpler solution to global state management in React.
-
-### 7. Performance
-
-Event emitters might provide a performance edge in cases where the Context API might cause unnecessary re-renders. Since event emitters don't inherently lead to re-renders, they can be more performant in specific scenarios.
-
-### 8. Non-UI Logic
-
-For parts of your application logic that reside outside the React component tree, event emitters can be beneficial, as they aren't tied to React's lifecycle or component hierarchy.
+### Link to React Example
 
 **For a practical use case in React using the BlinkHub Emitter, see the [React example on GitHub](https://github.com/valehasadli/blinkhub-react-example).**

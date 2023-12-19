@@ -73,4 +73,17 @@ export class EventRegistry<T extends Record<string, (...args: any[]) => void>> {
 			unsubscribeFunctions.forEach(unsubscribe => unsubscribe());
 		};
 	}
+
+	subscribeWithDelay<K extends keyof T>(
+		name: K,
+		callback: T[K],
+		delay: number,
+		priority: number = 0
+	): () => void {
+		const wrappedCallback = (...args: Parameters<T[K]>): void => {
+			setTimeout(() => callback(...args), delay);
+		};
+
+		return this.subscribe(name, wrappedCallback as any, priority);
+	}
 }

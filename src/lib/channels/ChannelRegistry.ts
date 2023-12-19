@@ -1,4 +1,4 @@
-import { Channel } from "./Channel";
+import { Channel } from './Channel';
 
 export class ChannelRegistry<T extends Record<string, (...args: any[]) => void>> {
 	private channels: Map<string, Channel<T>> = new Map();

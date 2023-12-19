@@ -4,9 +4,8 @@ Ensuring the security and trustworthiness of BlinkHub Emitter is paramount to us
 
 ## Supported Versions
 
-Only the latest version of **BlinkHub Emitter** is actively supported with security updates. 
-However, our library strictly follows a backward compatibility principle. 
-This means you can seamlessly update from any version to the latest without encountering API changes. There are no breaking changes.
+In line with our commitment to security and ease of use, we support only the latest version of **BlinkHub Emitter.** 
+Due to our strict adherence to 100% backward compatibility and the absence of any breaking changes, users can seamlessly update to the latest version from any previous version without encountering API changes.
 
 | Version | Supported          |
 | ------- | ------------------ |

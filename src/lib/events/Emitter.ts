@@ -5,7 +5,7 @@ import { IEventSubscriber } from '../interfaces/IEventSubscriber';
 import { IEventOnceSubscriber } from '../interfaces/IEventOnceSubscriber';
 import { IBulkEventSubscriber } from '../interfaces/IBulkEventSubscriber';
 import { IChannelEventEmitter } from '../interfaces/IChannelEventEmitter';
-import {IEventWithDelaySubscriber} from "../interfaces/IEventWithDelaySubscriber";
+import { IEventWithDelaySubscriber } from '../interfaces/IEventWithDelaySubscriber';
 
 export default class Emitter<T extends Record<string, (...args: any[]) => void>>
 	implements IEventSubscriber<T>, IEventOnceSubscriber<T>, IBulkEventSubscriber<T>, IChannelEventEmitter<T>,

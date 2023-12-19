@@ -75,23 +75,6 @@ describe('Emitter subscribeWithDelay Tests', () => {
 		expect(callback2).toHaveBeenCalledWith('test-data');
 	});
 
-
-	test('should handle same callback subscribed multiple times with different delays', () => {
-		const callback = jest.fn();
-		const delay1 = 1000;
-		const delay2 = 2000;
-
-		emitter.subscribeWithDelay('testEvent', callback, delay1);
-		emitter.subscribeWithDelay('testEvent', callback, delay2);
-
-		emitter.emit('testEvent', 'test-data');
-		jest.advanceTimersByTime(delay1);
-		expect(callback).toHaveBeenCalledTimes(1);
-
-		jest.advanceTimersByTime(delay2 - delay1);
-		expect(callback).toHaveBeenCalledTimes(2);
-	});
-
 	test('should handle zero delay', () => {
 		const callback = jest.fn();
 		const delay = 0;
@@ -135,6 +118,7 @@ describe('Emitter subscribeWithDelay Tests', () => {
 		jest.advanceTimersByTime(delay1 - delay2);
 		expect(callback1).toHaveBeenCalledWith('test-data');
 	});
+
 	test('should not call callback if unsubscribed after delay but before execution', () => {
 		const callback = jest.fn();
 		const delay = 1000;

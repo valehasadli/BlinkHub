@@ -1,4 +1,2 @@
-test: src/tests/*
+test: tests/*
 feat: src/*
-core: src/lib/*
-channel: src/channels/*

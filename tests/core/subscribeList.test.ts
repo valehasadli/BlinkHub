@@ -1,4 +1,4 @@
-import Emitter from "../../src";
+import Emitter from '../../src';
 
 describe('Emitter subscribe multiple events', () => {
 	type TestEvents = {

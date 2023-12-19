@@ -1,4 +1,4 @@
-import Emitter from "../../src";
+import Emitter from '../../src';
 
 type TestEvents = {
 	testEvent: (data: string) => void;

@@ -37,4 +37,68 @@ describe('Emission Emitter', () => {
         expect(event1Callback).toHaveBeenCalledTimes(1);
         expect(event2Callback).not.toHaveBeenCalled();
     });
+
+    test('should allow unsubscribing from an event', () => {
+        const callback = jest.fn();
+        const unsubscribe = emitter.subscribe('event', callback);
+
+        // Emit the event once with a dummy argument
+        emitter.emit('event', 'dummyArg');
+        expect(callback).toHaveBeenCalledTimes(1);
+
+        // Unsubscribe and emit again
+        unsubscribe();
+        emitter.emit('event', 'dummyArg');
+        expect(callback).toHaveBeenCalledTimes(1); // Should still be 1
+    });
+
+    test('should handle an event with multiple arguments', () => {
+        const callback = jest.fn();
+        emitter.subscribe('event', callback);
+
+        // Emit 'event' with two arguments
+        emitter.emit('event', 'arg1', 'arg2');
+        expect(callback.mock.calls[0]).toEqual(['arg1', 'arg2']); // Check the first call
+
+        // Emit 'event' with only the mandatory argument
+        emitter.emit('event', 'arg1');
+        expect(callback.mock.calls[1]).toEqual(['arg1']); // Check the second call
+    });
+
+    test('should continue executing other callbacks if one throws an error', () => {
+        const errorCallback = jest.fn(() => {
+            throw new Error('Test Error');
+        });
+        const normalCallback = jest.fn();
+        emitter.subscribe('event', errorCallback);
+        emitter.subscribe('event', normalCallback);
+        emitter.emit('event', 'data');
+        expect(normalCallback).toHaveBeenCalled();
+    });
+
+    test('should handle emission with no subscribers without errors', () => {
+        expect(() => emitter.emit('event', 'data')).not.toThrow();
+    });
+
+
+    test('should handle dynamic subscribing and unsubscribing within callbacks', () => {
+        const dynamicCallback = jest.fn(() => {
+            const unsubscribe = emitter.subscribe('event', jest.fn());
+            unsubscribe();
+        });
+        emitter.subscribe('event', dynamicCallback);
+        emitter.emit('event', 'data');
+        expect(dynamicCallback).toHaveBeenCalled();
+        // Check the total number of subscribers to ensure dynamic one was removed
+    });
+
+    test('should handle asynchronous callbacks correctly', done => {
+        const asyncCallback = jest.fn(async () => {
+            await Promise.resolve();
+            expect(asyncCallback).toHaveBeenCalled();
+            done();
+        });
+        emitter.subscribe('event', asyncCallback);
+        emitter.emit('event', 'data');
+    });
 });

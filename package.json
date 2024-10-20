@@ -1,14 +1,13 @@
 {
   "name": "blink-hub",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "A versatile and efficient event-handling library designed for the modern JS/TS ecosystem.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "build": "tsc",
-    "prepublishOnly": "tsc"
+    "build": "tsc"
   },
   "repository": {
     "type": "git",

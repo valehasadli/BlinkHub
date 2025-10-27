@@ -1,6 +1,6 @@
 {
   "name": "blink-hub",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A versatile and efficient event-handling library designed for the modern JS/TS ecosystem.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -28,7 +28,10 @@
   },
   "homepage": "https://github.com/valehasadli/BlinkHub#readme",
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
   ],
   "devDependencies": {
     "@babel/core": "^7.22.17",

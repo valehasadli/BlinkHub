@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.4] - 2025-10-27
+
+### Internal
+- Upgraded to modern GitHub release action for better automation
+
+### Added
+- Automated GitHub releases workflow triggered by version tags
+- Helper script `scripts/release.sh` for simplified release process
+- npm provenance support for supply chain security
+
 ## [1.0.3] - 2025-10-27
 
 ### Added

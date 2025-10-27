@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.3] - 2025-10-27
+
+### Added
+- Automated GitHub releases workflow triggered by version tags
+- Helper script `scripts/release.sh` for simplified release process
+- npm provenance support for supply chain security
+
+### Changed
+- npm publish workflow now triggers on git tags (v*) instead of master branch pushes
+- GitHub releases are now auto-created with changelog content extracted from CHANGELOG.md
+- Improved release workflow with automated testing, building, and publishing
+
 ## [1.0.2] - 2025-10-27
 
 ### Fixed
@@ -68,7 +80,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for async callbacks
 - Detailed documentation and examples
 
-[unreleased]: https://github.com/valehasadli/BlinkHub/compare/v1.0.1...HEAD
+[unreleased]: https://github.com/valehasadli/BlinkHub/compare/v1.0.3...HEAD
+[1.0.3]: https://github.com/valehasadli/BlinkHub/compare/v1.0.2...v1.0.3
+[1.0.2]: https://github.com/valehasadli/BlinkHub/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/valehasadli/BlinkHub/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/valehasadli/BlinkHub/compare/v0.5.0.1...v1.0.0
 [0.5.0.1]: https://github.com/valehasadli/BlinkHub/releases/tag/v0.5.0.1

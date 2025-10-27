@@ -3,20 +3,27 @@ on:
   push:
     branches:
       - master
-  pull_request:
-    types: [opened, synchronize, reopened]
+  # Disabled pull_request to avoid SONAR_TOKEN requirement on feature branches
+  # Uncomment and set up SONAR_TOKEN secret in GitHub repo settings to enable
+  # pull_request:
+  #   types: [opened, synchronize, reopened]
 jobs:
   sonarcloud:
     name: SonarCloud
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
       - name: Install dependencies
-        run: yarn
+        run: npm ci
       - name: Test and coverage
-        run: yarn jest --coverage
+        run: npm run test:coverage
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:

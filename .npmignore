@@ -14,7 +14,6 @@ jest.config.js
 
 # Development environment files
 node_modules/
-.yarn/
 .nyc_output/
 coverage/
 

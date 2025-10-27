@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.2] - 2025-10-27
+
+### Fixed
+- Fixed README.md not appearing on npm package page
+- Removed README.md from .npmignore
+- Added README.md, CHANGELOG.md, and LICENSE to package.json files array
+- Removed unnecessary GitHub Actions workflows (greetings, labeler, stale)
+
 ## [1.0.1] - 2025-10-27
 
 ### Security

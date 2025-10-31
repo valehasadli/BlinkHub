@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2025-10-31
+
+### Added
+- **Memory Management System** - Enterprise-grade memory leak detection and prevention
+  - `setMaxListeners(n)` - Set maximum listeners per event (default: 10)
+  - `getMaxListeners()` - Get current maximum listener limit
+  - `listenerCount(event)` - Count listeners for specific events
+  - `getEventNames()` - List all events with active listeners
+  - `getListeners(event)` - Retrieve all listener functions for an event
+  - `removeAllListeners(event?)` - Remove listeners for specific or all events
+  - Automatic memory leak warnings when listener limit exceeded
+  - Node.js EventEmitter API compatibility
+
+### Changed
+- Enhanced `PriorityQueue` with `size()` method for listener tracking
+- Improved event registry with listener introspection capabilities
+
+### Documentation
+- Added comprehensive Memory Management section to README
+- Added best practices for listener cleanup
+- Added memory leak detection examples
+
 ## [1.0.4] - 2025-10-27
 
 ### Internal

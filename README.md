@@ -16,6 +16,7 @@ A type-safe event emitter library built with TypeScript, which provides an inter
   - [Subscribing to Multiple Events](#subscribing-to-multiple-events)
   - [Emitter with Priority](#emitter-with-priority)
   - [Channel-Based Event Handling](#channel-based-event-handling)
+  - [Memory Management](#memory-management)
   - [Error Handling](#error-handling)
 - [Use Case Examples](#use-case-examples)
   - [Simple Notification System](#simple-notification-system)
@@ -318,6 +319,148 @@ notificationChannel.emit('channelEvent', 'You have 3 new notifications!');
 ```
 
 This channel-based approach ensures that events are handled only by the listeners that are relevant to the particular context or module, improving modularity and maintainability.
+
+## Memory Management
+
+BlinkHub provides enterprise-grade memory management features to prevent memory leaks and monitor listener usage in production applications. These APIs are compatible with Node.js EventEmitter standards.
+
+### Setting Maximum Listeners
+
+By default, BlinkHub warns you when more than 10 listeners are added to a single event. This helps detect potential memory leaks:
+
+```typescript
+const emitter = new Emitter<MyEvents>();
+
+// Set custom limit
+emitter.setMaxListeners(20); // Allow up to 20 listeners per event
+
+// Get current limit
+console.log(emitter.getMaxListeners()); // 20
+
+// Set to 0 for unlimited (not recommended in production)
+emitter.setMaxListeners(0);
+```
+
+### Memory Leak Detection
+
+When the listener limit is exceeded, BlinkHub automatically warns you:
+
+```typescript
+emitter.setMaxListeners(3);
+
+// Add 4 listeners - triggers warning on the 4th
+emitter.subscribe('data', handler1);
+emitter.subscribe('data', handler2);
+emitter.subscribe('data', handler3);
+emitter.subscribe('data', handler4); 
+// ⚠️  Possible memory leak detected. 4 listeners added for event "data". 
+// Use setMaxListeners() to increase limit. Current limit: 3
+```
+
+### Counting Listeners
+
+Track how many listeners are attached to specific events:
+
+```typescript
+const emitter = new Emitter<MyEvents>();
+
+emitter.subscribe('userLogin', handler1);
+emitter.subscribe('userLogin', handler2);
+
+console.log(emitter.listenerCount('userLogin')); // 2
+console.log(emitter.listenerCount('userLogout')); // 0
+```
+
+### Getting Event Names
+
+Retrieve all events that currently have listeners:
+
+```typescript
+emitter.subscribe('userLogin', () => {});
+emitter.subscribe('userLogout', () => {});
+emitter.subscribe('dataUpdate', () => {});
+
+const events = emitter.getEventNames();
+console.log(events); // ['userLogin', 'userLogout', 'dataUpdate']
+```
+
+### Inspecting Listeners
+
+Get all listener functions for a specific event:
+
+```typescript
+const handler1 = (data: string) => console.log('Handler 1:', data);
+const handler2 = (data: string) => console.log('Handler 2:', data);
+
+emitter.subscribe('data', handler1);
+emitter.subscribe('data', handler2);
+
+const listeners = emitter.getListeners('data');
+console.log(listeners); // [handler1, handler2]
+```
+
+### Removing All Listeners
+
+Clean up listeners for specific events or all events at once:
+
+```typescript
+// Remove all listeners for a specific event
+emitter.removeAllListeners('userLogin');
+
+// Remove all listeners for all events
+emitter.removeAllListeners();
+
+// Chainable API
+emitter
+  .setMaxListeners(15)
+  .removeAllListeners('oldEvent');
+```
+
+### Memory Management Best Practices
+
+```typescript
+// ✅ Good: Clean up in component lifecycle
+class UserService {
+  private emitter = new Emitter<UserEvents>();
+  private unsubscribers: Array<() => void> = [];
+
+  init() {
+    this.unsubscribers.push(
+      this.emitter.subscribe('login', this.handleLogin),
+      this.emitter.subscribe('logout', this.handleLogout)
+    );
+  }
+
+  destroy() {
+    // Clean up all listeners
+    this.unsubscribers.forEach(unsub => unsub());
+    this.unsubscribers = [];
+  }
+}
+
+// ✅ Good: Monitor listener counts in production
+function monitorEmitterHealth(emitter: Emitter<any>) {
+  const events = emitter.getEventNames();
+  events.forEach(event => {
+    const count = emitter.listenerCount(event);
+    if (count > 5) {
+      console.warn(`High listener count for "${event}": ${count}`);
+    }
+  });
+}
+
+// ❌ Bad: Never cleaning up listeners
+setInterval(() => {
+  emitter.subscribe('tick', () => {}); // Memory leak!
+}, 1000);
+
+// ✅ Good: Reuse same handler or clean up
+const tickHandler = () => {};
+setInterval(() => {
+  // Only subscribes once since it's the same function reference
+  emitter.subscribe('tick', tickHandler);
+}, 1000);
+```
 
 ## Additional Information
 

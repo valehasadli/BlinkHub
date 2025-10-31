@@ -1,6 +1,32 @@
-# BlinkHub Emitter
+# 🚀 BlinkHub Emitter
 
-A type-safe event emitter library built with TypeScript, which provides an interface for subscribing to and emitting events.
+<p align="center">
+  <strong>Enterprise-grade, type-safe event emitter for modern JavaScript applications</strong>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/npm/v/blink-hub" alt="npm version" />
+  <img src="https://img.shields.io/npm/dm/blink-hub" alt="npm downloads" />
+  <img src="https://img.shields.io/badge/TypeScript-5.0+-blue" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/React-✓-61dafb" alt="React" />
+  <img src="https://img.shields.io/badge/Vue-✓-4fc08d" alt="Vue" />
+  <img src="https://img.shields.io/badge/Svelte-✓-ff3e00" alt="Svelte" />
+  <img src="https://img.shields.io/badge/Node.js-✓-339933" alt="Node.js" />
+</p>
+
+BlinkHub is a lightweight, powerful event emitter library that brings enterprise-grade memory management and type safety to any JavaScript environment. Built with TypeScript, it works seamlessly in React, Vue, Svelte, Node.js, and beyond.
+
+## ✨ Why BlinkHub?
+
+- 🎯 **Type-Safe** - Full TypeScript support with strict type checking
+- 🔒 **Memory Safe** - Built-in leak detection and automatic warnings
+- ⚡ **Zero Dependencies** - Lightweight and fast (< 5KB gzipped)
+- 🌍 **Universal** - Works in browser, Node.js, Deno, Bun, React Native
+- 🎨 **Framework Agnostic** - Use with React, Vue, Svelte, or vanilla JS
+- 🔧 **EventEmitter Compatible** - Drop-in replacement for Node.js EventEmitter
+- 📊 **Priority Queues** - Control execution order with listener priorities
+- 🎭 **Channels** - Isolated event scopes for better organization
+- 🧹 **Easy Cleanup** - Built-in memory management and listener introspection
 
 ## Table of Contents
 
@@ -18,6 +44,10 @@ A type-safe event emitter library built with TypeScript, which provides an inter
   - [Channel-Based Event Handling](#channel-based-event-handling)
   - [Memory Management](#memory-management)
   - [Error Handling](#error-handling)
+- [Quick Start Examples](#quick-start-examples)
+  - [React: Complete Minimal App](#react-complete-minimal-app)
+  - [Vue: Complete Minimal App](#vue-complete-minimal-app)
+  - [Svelte: Complete Minimal App](#svelte-complete-minimal-app)
 - [Use Case Examples](#use-case-examples)
   - [Simple Notification System](#simple-notification-system)
   - [E-Commerce Cart System](#e-commerce-cart-system)
@@ -163,80 +193,833 @@ emitter.subscribe('eventName', () => {
 emitter.emit('eventName', 'Test', 'Error'); // Outputs: Error in callback for event 'eventName'
 ```
 
-### Use Case Examples
+## Quick Start Examples
 
-## Simple Notification System
+### React: Complete Minimal App
 
-Imagine a system where various components need to be notified when a user logs in or logs out.
+```tsx
+// App.tsx - Complete working example
+import { useEffect, useState } from 'react';
+import Emitter from 'blink-hub';
 
-First, define the events:
+// 1. Define your events
+type AppEvents = {
+  notify: (message: string) => void;
+  userAction: (action: string) => void;
+};
+
+// 2. Create emitter instance (do this once, outside component)
+const appEmitter = new Emitter<AppEvents>();
+
+// 3. Create a listener component
+function NotificationDisplay() {
+  const [notifications, setNotifications] = useState<string[]>([]);
+
+  useEffect(() => {
+    // Subscribe to events
+    const unsubscribe = appEmitter.subscribe('notify', (message) => {
+      setNotifications(prev => [...prev, message]);
+      // Auto-remove after 3 seconds
+      setTimeout(() => {
+        setNotifications(prev => prev.slice(1));
+      }, 3000);
+    });
+
+    // Cleanup on unmount
+    return unsubscribe;
+  }, []);
+
+  return (
+    <div style={{ position: 'fixed', top: 20, right: 20 }}>
+      {notifications.map((msg, i) => (
+        <div key={i} style={{ 
+          background: '#4caf50', 
+          color: 'white', 
+          padding: '10px 20px',
+          margin: '5px 0',
+          borderRadius: '4px'
+        }}>
+          {msg}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// 4. Emit events from anywhere
+function ActionButtons() {
+  const handleClick = (action: string) => {
+    // Emit event - NotificationDisplay will receive it
+    appEmitter.emit('notify', `You clicked: ${action}`);
+    appEmitter.emit('userAction', action);
+  };
+
+  return (
+    <div>
+      <h1>BlinkHub React Example</h1>
+      <button onClick={() => handleClick('Save')}>Save</button>
+      <button onClick={() => handleClick('Delete')}>Delete</button>
+      <button onClick={() => handleClick('Update')}>Update</button>
+    </div>
+  );
+}
+
+// 5. Main App
+export default function App() {
+  return (
+    <>
+      <NotificationDisplay />
+      <ActionButtons />
+    </>
+  );
+}
+```
+
+### Vue: Complete Minimal App
+
+```vue
+<!-- App.vue - Complete working example -->
+<script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue';
+import Emitter from 'blink-hub';
+
+// 1. Define your events
+type AppEvents = {
+  notify: (message: string) => void;
+  userAction: (action: string) => void;
+};
+
+// 2. Create emitter instance
+const appEmitter = new Emitter<AppEvents>();
+
+// 3. Reactive state
+const notifications = ref<string[]>([]);
+
+// 4. Subscribe to events
+let unsubscribe: (() => void) | null = null;
+
+onMounted(() => {
+  unsubscribe = appEmitter.subscribe('notify', (message) => {
+    notifications.value.push(message);
+    
+    // Auto-remove after 3 seconds
+    setTimeout(() => {
+      notifications.value.shift();
+    }, 3000);
+  });
+});
+
+// 5. Cleanup
+onUnmounted(() => {
+  unsubscribe?.();
+});
+
+// 6. Emit events
+const handleClick = (action: string) => {
+  appEmitter.emit('notify', `You clicked: ${action}`);
+  appEmitter.emit('userAction', action);
+};
+</script>
+
+<template>
+  <div>
+    <h1>BlinkHub Vue Example</h1>
+    
+    <!-- Action buttons -->
+    <div>
+      <button @click="handleClick('Save')">Save</button>
+      <button @click="handleClick('Delete')">Delete</button>
+      <button @click="handleClick('Update')">Update</button>
+    </div>
+
+    <!-- Notifications -->
+    <div style="position: fixed; top: 20px; right: 20px;">
+      <div
+        v-for="(msg, i) in notifications"
+        :key="i"
+        style="
+          background: #4caf50;
+          color: white;
+          padding: 10px 20px;
+          margin: 5px 0;
+          border-radius: 4px;
+        "
+      >
+        {{ msg }}
+      </div>
+    </div>
+  </div>
+</template>
+```
+
+### Svelte: Complete Minimal App
+
+```svelte
+<!-- App.svelte - Complete working example -->
+<script lang="ts">
+  import { onMount, onDestroy } from 'svelte';
+  import Emitter from 'blink-hub';
+
+  // 1. Define your events
+  type AppEvents = {
+    notify: (message: string) => void;
+    userAction: (action: string) => void;
+  };
+
+  // 2. Create emitter instance
+  const appEmitter = new Emitter<AppEvents>();
+
+  // 3. Reactive state
+  let notifications: string[] = [];
+
+  // 4. Subscribe to events
+  let unsubscribe: (() => void) | null = null;
+
+  onMount(() => {
+    unsubscribe = appEmitter.subscribe('notify', (message) => {
+      notifications = [...notifications, message];
+      
+      // Auto-remove after 3 seconds
+      setTimeout(() => {
+        notifications = notifications.slice(1);
+      }, 3000);
+    });
+  });
+
+  // 5. Cleanup
+  onDestroy(() => {
+    unsubscribe?.();
+  });
+
+  // 6. Emit events
+  function handleClick(action: string) {
+    appEmitter.emit('notify', `You clicked: ${action}`);
+    appEmitter.emit('userAction', action);
+  }
+</script>
+
+<div>
+  <h1>BlinkHub Svelte Example</h1>
+  
+  <!-- Action buttons -->
+  <div>
+    <button on:click={() => handleClick('Save')}>Save</button>
+    <button on:click={() => handleClick('Delete')}>Delete</button>
+    <button on:click={() => handleClick('Update')}>Update</button>
+  </div>
+
+  <!-- Notifications -->
+  <div style="position: fixed; top: 20px; right: 20px;">
+    {#each notifications as msg, i}
+      <div
+        style="
+          background: #4caf50;
+          color: white;
+          padding: 10px 20px;
+          margin: 5px 0;
+          border-radius: 4px;
+        "
+      >
+        {msg}
+      </div>
+    {/each}
+  </div>
+</div>
+
+<style>
+  button {
+    margin: 0 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+</style>
+```
+
+---
+
+## Real-World Use Cases
+
+### React Examples
+
+#### 1. Global Toast Notification System
+
+Create a global notification system without prop drilling or Context API overhead:
 
 ```typescript
+// services/notifications.ts
+import Emitter from 'blink-hub';
+
+type NotificationEvents = {
+  success: (message: string) => void;
+  error: (message: string, error?: Error) => void;
+  info: (message: string) => void;
+  warning: (message: string) => void;
+};
+
+export const notificationEmitter = new Emitter<NotificationEvents>();
+```
+
+```tsx
+// components/ToastContainer.tsx
+import { useEffect, useState } from 'react';
+import { notificationEmitter } from '../services/notifications';
+
+interface Toast {
+  id: number;
+  type: 'success' | 'error' | 'info' | 'warning';
+  message: string;
+}
+
+export function ToastContainer() {
+  const [toasts, setToasts] = useState<Toast[]>([]);
+
+  useEffect(() => {
+    // Set memory limit for production
+    notificationEmitter.setMaxListeners(20);
+
+    const unsubscribers = [
+      notificationEmitter.subscribe('success', (message) => {
+        setToasts(prev => [...prev, { id: Date.now(), type: 'success', message }]);
+      }),
+      notificationEmitter.subscribe('error', (message) => {
+        setToasts(prev => [...prev, { id: Date.now(), type: 'error', message }]);
+      }),
+      notificationEmitter.subscribe('info', (message) => {
+        setToasts(prev => [...prev, { id: Date.now(), type: 'info', message }]);
+      }),
+    ];
+
+    // Cleanup all listeners on unmount
+    return () => unsubscribers.forEach(unsub => unsub());
+  }, []);
+
+  return (
+    <div className="toast-container">
+      {toasts.map(toast => (
+        <div key={toast.id} className={`toast toast-${toast.type}`}>
+          {toast.message}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// Usage in any component - no props needed!
+function SaveButton() {
+  const handleSave = async () => {
+    try {
+      await saveData();
+      notificationEmitter.emit('success', 'Data saved successfully!');
+    } catch (error) {
+      notificationEmitter.emit('error', 'Failed to save data', error as Error);
+    }
+  };
+
+  return <button onClick={handleSave}>Save</button>;
+}
+```
+
+#### 2. Real-Time Chat Application
+
+Handle WebSocket messages with channels for different chat rooms:
+
+```tsx
+// services/chat.ts
+import Emitter from 'blink-hub';
+
+type ChatEvents = {
+  messageReceived: (message: Message) => void;
+  userJoined: (user: User) => void;
+  userLeft: (userId: string) => void;
+  typing: (userId: string, isTyping: boolean) => void;
+};
+
+export const chatEmitter = new Emitter<ChatEvents>();
+
+// Create isolated channels for each chat room
+export function getChatChannel(roomId: string) {
+  return chatEmitter.channel(`room-${roomId}`);
+}
+```
+
+```tsx
+// components/ChatRoom.tsx
+import { useEffect, useState } from 'react';
+import { getChatChannel } from '../services/chat';
+
+function ChatRoom({ roomId }: { roomId: string }) {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    const channel = getChatChannel(roomId);
+
+    const unsubscribers = [
+      channel.subscribe('messageReceived', (message) => {
+        setMessages(prev => [...prev, message]);
+      }),
+      channel.subscribe('userJoined', (user) => {
+        setOnlineUsers(prev => [...prev, user]);
+      }),
+      channel.subscribe('userLeft', (userId) => {
+        setOnlineUsers(prev => prev.filter(u => u.id !== userId));
+      }),
+    ];
+
+    // Cleanup when switching rooms
+    return () => unsubscribers.forEach(unsub => unsub());
+  }, [roomId]);
+
+  return (
+    <div>
+      <MessageList messages={messages} />
+      <OnlineUsers users={onlineUsers} />
+    </div>
+  );
+}
+```
+
+#### 3. Analytics Tracking
+
+Centralized analytics without cluttering your components:
+
+```tsx
+// services/analytics.ts
+import Emitter from 'blink-hub';
+
+type AnalyticsEvents = {
+  pageView: (page: string, metadata?: Record<string, any>) => void;
+  buttonClick: (buttonName: string, location: string) => void;
+  formSubmit: (formName: string, success: boolean) => void;
+  error: (error: Error, context: string) => void;
+};
+
+export const analyticsEmitter = new Emitter<AnalyticsEvents>();
+
+// Set up analytics listeners once
+analyticsEmitter.subscribe('pageView', (page, metadata) => {
+  gtag('event', 'page_view', { page_path: page, ...metadata });
+});
+
+analyticsEmitter.subscribe('buttonClick', (buttonName, location) => {
+  mixpanel.track('Button Clicked', { button: buttonName, location });
+});
+
+analyticsEmitter.subscribe('error', (error, context) => {
+  Sentry.captureException(error, { extra: { context } });
+});
+```
+
+```tsx
+// Usage in components
+function CheckoutButton() {
+  const handleClick = () => {
+    analyticsEmitter.emit('buttonClick', 'Checkout', 'CartPage');
+    proceedToCheckout();
+  };
+
+  return <button onClick={handleClick}>Checkout</button>;
+}
+```
+
+### Vue Examples
+
+#### 1. Global State Updates Without Vuex
+
+```typescript
+// services/user.ts
+import Emitter from 'blink-hub';
+
 type UserEvents = {
-  userLoggedIn: (username: string, time: Date) => void;
-  userLoggedOut: (username: string) => void;
+  loggedIn: (user: User) => void;
+  loggedOut: () => void;
+  profileUpdated: (updates: Partial<User>) => void;
 };
+
+export const userEmitter = new Emitter<UserEvents>();
 ```
 
-Then, create an instance of the <code>Emitter</code>:
+```vue
+<!-- components/UserProfile.vue -->
+<script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue';
+import { userEmitter } from '../services/user';
 
-```typescript
-const userEmitter = new Emitter<UserEvents>();
-```
+const user = ref<User | null>(null);
+const unsubscribers: Array<() => void> = [];
 
-Components can now subscribe to these events:
-
-```typescript
-// Notify components about user's login
-userEmitter.subscribe('userLoggedIn', (username: string, time: Date) => {
-    console.log(`${username} logged in at ${time.toLocaleTimeString()}`);
+onMounted(() => {
+  unsubscribers.push(
+    userEmitter.subscribe('loggedIn', (newUser) => {
+      user.value = newUser;
+    }),
+    userEmitter.subscribe('loggedOut', () => {
+      user.value = null;
+    }),
+    userEmitter.subscribe('profileUpdated', (updates) => {
+      if (user.value) {
+        user.value = { ...user.value, ...updates };
+      }
+    })
+  );
 });
 
-// Notify components about user's logout
-userEmitter.subscribe('userLoggedOut', (username: string) => {
-    console.log(`${username} has logged out.`);
+onUnmounted(() => {
+  unsubscribers.forEach(unsub => unsub());
 });
+</script>
+
+<template>
+  <div v-if="user" class="user-profile">
+    <img :src="user.avatar" :alt="user.name" />
+    <h2>{{ user.name }}</h2>
+    <p>{{ user.email }}</p>
+  </div>
+</template>
 ```
 
-Emitting the events when a user logs in or out:
+#### 2. Real-Time Shopping Cart
 
 ```typescript
-userEmitter.emit('userLoggedIn', 'Alice', new Date());
-userEmitter.emit('userLoggedOut', 'Alice');
-```
+// services/cart.ts
+import Emitter from 'blink-hub';
 
-## E-Commerce Cart System
-
-Consider an e-commerce application where you might want to listen for events related to items being added or removed from a cart.
-
-Define your events:
-
-```typescript
 type CartEvents = {
-  itemAdded: (itemName: string, quantity: number) => void;
-  itemRemoved: (itemName: string) => void;
+  itemAdded: (item: Product, quantity: number) => void;
+  itemRemoved: (itemId: string) => void;
+  quantityChanged: (itemId: string, quantity: number) => void;
+  cartCleared: () => void;
 };
+
+export const cartEmitter = new Emitter<CartEvents>();
 ```
 
-Create an instance and subscribe to the events:
+```vue
+<!-- components/CartIcon.vue -->
+<script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue';
+import { cartEmitter } from '../services/cart';
 
-```typescript
-const cartEmitter = new Emitter<CartEvents>();
+const itemCount = ref(0);
+const unsubscribers: Array<() => void> = [];
 
-cartEmitter.subscribe('itemAdded', (itemName: string, quantity: number) => {
-    console.log(`Added ${quantity} of ${itemName} to the cart.`);
+onMounted(() => {
+  unsubscribers.push(
+    cartEmitter.subscribe('itemAdded', (item, quantity) => {
+      itemCount.value += quantity;
+    }),
+    cartEmitter.subscribe('itemRemoved', () => {
+      itemCount.value = Math.max(0, itemCount.value - 1);
+    }),
+    cartEmitter.subscribe('cartCleared', () => {
+      itemCount.value = 0;
+    })
+  );
 });
 
-cartEmitter.subscribe('itemRemoved', (itemName: string) => {
-    console.log(`${itemName} has been removed from the cart.`);
+onUnmounted(() => {
+  unsubscribers.forEach(unsub => unsub());
+});
+</script>
+
+<template>
+  <div class="cart-icon">
+    <ShoppingCartIcon />
+    <span v-if="itemCount > 0" class="badge">{{ itemCount }}</span>
+  </div>
+</template>
+```
+
+### Svelte Examples
+
+#### 1. Global Loading State
+
+```typescript
+// services/loading.ts
+import Emitter from 'blink-hub';
+
+type LoadingEvents = {
+  startLoading: (operation: string) => void;
+  stopLoading: (operation: string) => void;
+};
+
+export const loadingEmitter = new Emitter<LoadingEvents>();
+```
+
+```svelte
+<!-- components/LoadingOverlay.svelte -->
+<script lang="ts">
+  import { onMount, onDestroy } from 'svelte';
+  import { loadingEmitter } from '../services/loading';
+
+  let activeOperations = new Set<string>();
+  $: isLoading = activeOperations.size > 0;
+
+  const unsubscribers: Array<() => void> = [];
+
+  onMount(() => {
+    unsubscribers.push(
+      loadingEmitter.subscribe('startLoading', (operation) => {
+        activeOperations.add(operation);
+        activeOperations = activeOperations; // Trigger reactivity
+      }),
+      loadingEmitter.subscribe('stopLoading', (operation) => {
+        activeOperations.delete(operation);
+        activeOperations = activeOperations;
+      })
+    );
+  });
+
+  onDestroy(() => {
+    unsubscribers.forEach(unsub => unsub());
+  });
+</script>
+
+{#if isLoading}
+  <div class="loading-overlay">
+    <div class="spinner"></div>
+    <p>Loading...</p>
+  </div>
+{/if}
+
+<!-- Usage in any component -->
+<script lang="ts">
+  async function fetchData() {
+    loadingEmitter.emit('startLoading', 'fetch-data');
+    try {
+      await api.getData();
+    } finally {
+      loadingEmitter.emit('stopLoading', 'fetch-data');
+    }
+  }
+</script>
+```
+
+#### 2. Form Validation Events
+
+```typescript
+// services/validation.ts
+import Emitter from 'blink-hub';
+
+type ValidationEvents = {
+  fieldValidated: (fieldName: string, isValid: boolean, error?: string) => void;
+  formValidated: (formName: string, isValid: boolean) => void;
+};
+
+export const validationEmitter = new Emitter<ValidationEvents>();
+```
+
+```svelte
+<!-- components/ValidationSummary.svelte -->
+<script lang="ts">
+  import { onMount, onDestroy } from 'svelte';
+  import { validationEmitter } from '../services/validation';
+
+  let errors: Record<string, string> = {};
+
+  const unsubscribe = onMount(() => {
+    return validationEmitter.subscribe('fieldValidated', (field, isValid, error) => {
+      if (!isValid && error) {
+        errors[field] = error;
+      } else {
+        delete errors[field];
+      }
+      errors = errors; // Trigger reactivity
+    });
+  });
+
+  onDestroy(() => {
+    unsubscribe?.();
+  });
+</script>
+
+{#if Object.keys(errors).length > 0}
+  <div class="validation-errors">
+    {#each Object.entries(errors) as [field, error]}
+      <p class="error">{field}: {error}</p>
+    {/each}
+  </div>
+{/if}
+```
+
+### Node.js Backend Examples
+
+#### 1. Microservices Event Bus
+
+```typescript
+// services/eventBus.ts
+import Emitter from 'blink-hub';
+
+type ServiceEvents = {
+  userCreated: (user: User) => void;
+  orderPlaced: (order: Order) => void;
+  paymentProcessed: (payment: Payment) => void;
+  emailSent: (recipient: string, subject: string) => void;
+};
+
+export const serviceEventBus = new Emitter<ServiceEvents>();
+
+// Set appropriate limits for production
+serviceEventBus.setMaxListeners(50);
+
+// Multiple services can listen to the same event
+serviceEventBus.subscribe('userCreated', async (user) => {
+  await sendWelcomeEmail(user);
+});
+
+serviceEventBus.subscribe('userCreated', async (user) => {
+  await createUserProfile(user);
+});
+
+serviceEventBus.subscribe('userCreated', async (user) => {
+  await analytics.track('user_registered', user);
+}, 10); // High priority for analytics
+```
+
+#### 2. Request Lifecycle Monitoring
+
+```typescript
+// middleware/requestMonitoring.ts
+import express from 'express';
+import Emitter from 'blink-hub';
+
+type RequestEvents = {
+  requestStarted: (req: express.Request) => void;
+  requestCompleted: (req: express.Request, duration: number) => void;
+  requestFailed: (req: express.Request, error: Error) => void;
+};
+
+export const requestEmitter = new Emitter<RequestEvents>();
+
+// Logger listens to all request events
+requestEmitter.subscribe('requestStarted', (req) => {
+  logger.info(`${req.method} ${req.path} started`);
+});
+
+requestEmitter.subscribe('requestCompleted', (req, duration) => {
+  logger.info(`${req.method} ${req.path} completed in ${duration}ms`);
+});
+
+requestEmitter.subscribe('requestFailed', (req, error) => {
+  logger.error(`${req.method} ${req.path} failed:`, error);
+});
+
+// Metrics collection
+requestEmitter.subscribe('requestCompleted', (req, duration) => {
+  metrics.histogram('request_duration', duration, {
+    method: req.method,
+    path: req.route?.path || req.path,
+  });
+});
+
+// Middleware
+export function requestMonitoring(req: express.Request, res: express.Response, next: express.NextFunction) {
+  const startTime = Date.now();
+  requestEmitter.emit('requestStarted', req);
+
+  res.on('finish', () => {
+    const duration = Date.now() - startTime;
+    requestEmitter.emit('requestCompleted', req, duration);
+  });
+
+  next();
+}
+```
+
+#### 3. Database Change Streams
+
+```typescript
+// services/database.ts
+import Emitter from 'blink-hub';
+import { MongoClient } from 'mongodb';
+
+type DatabaseEvents = {
+  documentInserted: (collection: string, document: any) => void;
+  documentUpdated: (collection: string, documentId: string, changes: any) => void;
+  documentDeleted: (collection: string, documentId: string) => void;
+};
+
+export const dbEmitter = new Emitter<DatabaseEvents>();
+
+// Watch for changes
+async function watchCollection(collection: string) {
+  const changeStream = db.collection(collection).watch();
+
+  changeStream.on('change', (change) => {
+    switch (change.operationType) {
+      case 'insert':
+        dbEmitter.emit('documentInserted', collection, change.fullDocument);
+        break;
+      case 'update':
+        dbEmitter.emit('documentUpdated', collection, change.documentKey._id, change.updateDescription);
+        break;
+      case 'delete':
+        dbEmitter.emit('documentDeleted', collection, change.documentKey._id);
+        break;
+    }
+  });
+}
+
+// Cache invalidation
+dbEmitter.subscribe('documentUpdated', (collection, id) => {
+  cache.invalidate(`${collection}:${id}`);
+});
+
+// Real-time notifications
+dbEmitter.subscribe('documentInserted', (collection, document) => {
+  if (collection === 'orders') {
+    websocket.broadcast('new-order', document);
+  }
+});
+
+// Audit logging
+dbEmitter.subscribe('documentDeleted', (collection, id) => {
+  auditLog.record({
+    action: 'delete',
+    collection,
+    documentId: id,
+    timestamp: new Date(),
+  });
 });
 ```
 
-When items are added or removed from the cart:
+#### 4. Job Queue with Priority
 
 ```typescript
-cartEmitter.emit('itemAdded', 'Laptop', 1);
-cartEmitter.emit('itemRemoved', 'Laptop');
+// services/jobQueue.ts
+import Emitter from 'blink-hub';
+
+type JobEvents = {
+  jobQueued: (job: Job) => void;
+  jobStarted: (job: Job) => void;
+  jobCompleted: (job: Job, result: any) => void;
+  jobFailed: (job: Job, error: Error) => void;
+};
+
+export const jobEmitter = new Emitter<JobEvents>();
+
+// High priority: System administrators
+jobEmitter.subscribe('jobFailed', (job, error) => {
+  alerting.sendAlert('critical', `Job ${job.id} failed`, error);
+}, 10);
+
+// Medium priority: Monitoring
+jobEmitter.subscribe('jobFailed', (job, error) => {
+  metrics.increment('jobs.failed', { type: job.type });
+}, 5);
+
+// Low priority: Logging
+jobEmitter.subscribe('jobFailed', (job, error) => {
+  logger.error(`Job ${job.id} failed:`, error);
+}, 0);
+
+// Retry failed jobs
+jobEmitter.subscribe('jobFailed', async (job, error) => {
+  if (job.retries < 3) {
+    await retryJob(job);
+  }
+});
 ```
 
 ## Emitter with Priority

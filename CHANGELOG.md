@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2025-10-31
+
+### Documentation
+- **Quick Start Examples** - Added complete minimal working apps for React, Vue, and Svelte
+- **Framework Use Cases** - Added 11 production-ready examples across all frameworks
+  - React: Toast notifications, real-time chat, analytics
+  - Vue: Global state, shopping cart
+  - Svelte: Loading state, form validation
+  - Node.js: Event bus, monitoring, database streams, job queues
+- **Integration Guides** - Added framework-specific best practices
+  - React hooks and cleanup patterns
+  - Vue composables and plugins
+  - Svelte stores and lifecycle management
+- **Enhanced FAQ** - Comprehensive answers with code examples
+- **Comparison Tables** - BlinkHub vs EventEmitter feature matrix
+- **Professional Formatting** - Added badges, emojis, better structure
+
+### Improved
+- Better developer onboarding experience
+- Clear framework-specific documentation
+- Production-ready code examples
+
 ## [1.1.0] - 2025-10-31
 
 ### Added
@@ -112,7 +134,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for async callbacks
 - Detailed documentation and examples
 
-[unreleased]: https://github.com/valehasadli/BlinkHub/compare/v1.0.3...HEAD
+[unreleased]: https://github.com/valehasadli/BlinkHub/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/valehasadli/BlinkHub/compare/v1.1.0...v1.2.0
 [1.0.3]: https://github.com/valehasadli/BlinkHub/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/valehasadli/BlinkHub/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/valehasadli/BlinkHub/compare/v1.0.0...v1.0.1

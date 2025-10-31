@@ -3,6 +3,8 @@ import PriorityQueue from './PriorityQueue';
 
 export class EventRegistry<T extends Record<string, (...args: any[]) => void>> {
 	private events: Partial<Record<keyof T, PriorityQueue<T[keyof T]>>> = {};
+	private maxListeners: number = 10;
+	private warningEmitted: Set<keyof T> = new Set();
 
 	subscribe<K extends keyof T>(name: K, callback: T[K], priority: number = 0): () => void {
 		if (!this.events[name]) {
@@ -11,6 +13,9 @@ export class EventRegistry<T extends Record<string, (...args: any[]) => void>> {
 
 		const listener: Listener<T[K]> = { callback, priority };
 		this.events[name]!.enqueue(listener);
+
+		// Check for potential memory leak
+		this.checkMaxListeners(name);
 
 		return (): void => {
 			this.events[name]?.remove(listener);
@@ -85,5 +90,77 @@ export class EventRegistry<T extends Record<string, (...args: any[]) => void>> {
 		};
 
 		return this.subscribe(name, wrappedCallback as any, priority);
+	}
+
+	/**
+	 * Check if max listeners exceeded and emit warning
+	 */
+	private checkMaxListeners<K extends keyof T>(name: K): void {
+		if (this.maxListeners === 0) return; // 0 means unlimited
+
+		const count = this.events[name]?.size() || 0;
+		if (count > this.maxListeners && !this.warningEmitted.has(name)) {
+			this.warningEmitted.add(name);
+			console.warn(
+				`⚠️  Possible memory leak detected. ${count} listeners added for event "${String(name)}". ` +
+				`Use setMaxListeners() to increase limit. Current limit: ${this.maxListeners}`
+			);
+		}
+	}
+
+	/**
+	 * Set the maximum number of listeners per event
+	 * @param n - Maximum number (0 for unlimited)
+	 */
+	setMaxListeners(n: number): void {
+		if (n < 0) {
+			throw new RangeError('maxListeners must be a non-negative number');
+		}
+		this.maxListeners = n;
+		this.warningEmitted.clear(); // Reset warnings when limit changes
+	}
+
+	/**
+	 * Get the maximum number of listeners per event
+	 */
+	getMaxListeners(): number {
+		return this.maxListeners;
+	}
+
+	/**
+	 * Get the number of listeners for a specific event
+	 */
+	listenerCount<K extends keyof T>(name: K): number {
+		return this.events[name]?.size() || 0;
+	}
+
+	/**
+	 * Get all event names that have listeners
+	 */
+	getEventNames(): (keyof T)[] {
+		return Object.keys(this.events).filter(
+			name => this.events[name as keyof T]?.size()! > 0
+		) as (keyof T)[];
+	}
+
+	/**
+	 * Get all listeners for a specific event
+	 */
+	getListeners<K extends keyof T>(name: K): T[K][] {
+		if (!this.events[name]) return [];
+		return this.events[name]!.getListeners().map(listener => listener.callback as T[K]);
+	}
+
+	/**
+	 * Remove all listeners for a specific event or all events
+	 */
+	removeAllListeners<K extends keyof T>(name?: K): void {
+		if (name !== undefined) {
+			delete this.events[name];
+			this.warningEmitted.delete(name);
+		} else {
+			this.events = {};
+			this.warningEmitted.clear();
+		}
 	}
 }

@@ -23,4 +23,8 @@ export default class PriorityQueue<T extends (...args: any[]) => any> {
 			this.items.splice(index, 1);
 		}
 	}
+
+	size(): number {
+		return this.items.length;
+	}
 }

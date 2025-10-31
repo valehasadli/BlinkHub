@@ -41,4 +41,50 @@ export default class Emitter<T extends Record<string, (...args: any[]) => void>>
 	): () => void {
 		return this.eventRegistry.subscribeWithDelay(name, callback, delay, priority);
 	}
+
+	/**
+	 * Set the maximum number of listeners per event
+	 * @param n - Maximum number (0 for unlimited, default: 10)
+	 */
+	setMaxListeners(n: number): this {
+		this.eventRegistry.setMaxListeners(n);
+		return this;
+	}
+
+	/**
+	 * Get the maximum number of listeners per event
+	 */
+	getMaxListeners(): number {
+		return this.eventRegistry.getMaxListeners();
+	}
+
+	/**
+	 * Get the number of listeners for a specific event
+	 */
+	listenerCount<K extends keyof T>(name: K): number {
+		return this.eventRegistry.listenerCount(name);
+	}
+
+	/**
+	 * Get all event names that have listeners
+	 */
+	getEventNames(): (keyof T)[] {
+		return this.eventRegistry.getEventNames();
+	}
+
+	/**
+	 * Get all listeners for a specific event
+	 */
+	getListeners<K extends keyof T>(name: K): T[K][] {
+		return this.eventRegistry.getListeners(name);
+	}
+
+	/**
+	 * Remove all listeners for a specific event or all events
+	 * @param name - Event name (omit to remove all listeners)
+	 */
+	removeAllListeners<K extends keyof T>(name?: K): this {
+		this.eventRegistry.removeAllListeners(name);
+		return this;
+	}
 }
